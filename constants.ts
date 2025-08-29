@@ -1,5 +1,10 @@
-
 import { Platform, PlatformData } from './types';
+
+export const platformIcons: Record<Platform, string> = {
+    [Platform.Instagram]: 'https://raw.githubusercontent.com/tandpfun/skill-icons/65d131d61633538f61286a8b3353597d341d3b38/icons/Instagram.svg',
+    [Platform.Twitter]: 'https://raw.githubusercontent.com/tandpfun/skill-icons/65d131d61633538f61286a8b3353597d341d3b38/icons/Twitter.svg',
+    [Platform.Facebook]: 'https://raw.githubusercontent.com/tandpfun/skill-icons/65d131d61633538f61286a8b3353597d341d3b38/icons/Facebook.svg',
+};
 
 export const MOCK_DATA: Record<Platform, PlatformData> = {
     [Platform.Instagram]: {

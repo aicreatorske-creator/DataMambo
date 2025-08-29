@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Metric } from '../types';
 
@@ -10,7 +9,7 @@ const MetricCard: React.FC<Metric> = ({ title, value, change, changeType }) => {
     const changeColor = isIncrease ? 'text-success' : 'text-danger';
 
     return (
-        <div className="bg-surface p-6 rounded-xl shadow-lg transition-transform duration-300 hover:scale-105">
+        <div className="bg-surface p-6 rounded-xl shadow-lg">
             <h3 className="text-on-surface-secondary text-md font-medium">{title}</h3>
             <div className="flex justify-between items-end mt-2">
                 <p className="text-3xl font-bold text-on-surface">{value}</p>

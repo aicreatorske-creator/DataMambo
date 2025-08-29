@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Page } from '../App';
 
 const LogoIcon = () => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -14,24 +15,26 @@ const LogoIcon = () => (
     </svg>
 );
 
-const NavLink: React.FC<{ icon: JSX.Element; label: string; active?: boolean }> = ({ icon, label, active }) => (
-    <a href="#" className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${active ? 'bg-primary text-white' : 'hover:bg-surface'}`}>
+const NavLink: React.FC<{ icon: JSX.Element; label: string; active?: boolean; onClick: () => void; }> = ({ icon, label, active, onClick }) => (
+    <button onClick={onClick} className={`flex w-full items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${active ? 'bg-primary text-white' : 'hover:bg-surface text-on-surface-secondary hover:text-on-surface'}`}>
         {icon}
         <span className="font-medium">{label}</span>
-    </a>
+    </button>
 );
 
 interface SidebarProps {
     onLogout: () => void;
+    activePage: Page;
+    setActivePage: (page: Page) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }) => {
     const navItems = [
-        { icon: <HomeIcon />, label: 'Dashboard', active: true },
-        { icon: <ChartBarIcon />, label: 'Analytics' },
-        { icon: <DocumentTextIcon />, label: 'Reports' },
-        { icon: <UsersIcon />, label: 'Audience' },
-        { icon: <CogIcon />, label: 'Settings' },
+        { icon: <HomeIcon />, label: 'Overview', page: 'Overview' as Page },
+        { icon: <ChartBarIcon />, label: 'Analytics', page: 'Analytics' as Page },
+        { icon: <DocumentTextIcon />, label: 'Content', page: 'Content' as Page },
+        { icon: <UsersIcon />, label: 'Audience', page: 'Audience' as Page },
+        { icon: <CogIcon />, label: 'Settings', page: 'Settings' as Page },
     ];
 
     return (
@@ -41,7 +44,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
                 <span className="text-2xl font-bold text-on-surface">DataMambo</span>
             </div>
             <nav className="flex-1 space-y-2">
-                {navItems.map(item => <NavLink key={item.label} {...item} />)}
+                {navItems.map(item => (
+                    <NavLink 
+                        key={item.label} 
+                        {...item}
+                        active={activePage === item.page}
+                        onClick={() => setActivePage(item.page)}
+                    />
+                ))}
             </nav>
             <div className="mt-auto">
                  <div className="flex items-center space-x-3 border-t border-gray-700 pt-6">
