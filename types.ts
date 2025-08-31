@@ -1,9 +1,13 @@
-
 export enum Platform {
     Instagram = 'Instagram',
     Twitter = 'Twitter',
     Facebook = 'Facebook',
+    LinkedIn = 'LinkedIn',
+    TikTok = 'TikTok',
+    YouTube = 'YouTube',
 }
+
+export type Theme = 'light' | 'dark' | 'bw';
 
 export interface Metric {
     title: string;
@@ -33,6 +37,7 @@ export interface DemographicsData {
 export interface PlatformData {
     metrics: Metric[];
     followerGrowth: ChartDataPoint[];
+    growthChartTitle: string;
     engagementByType: ChartDataPoint[];
     topPosts: Post[];
     audienceDemographics: DemographicsData[];

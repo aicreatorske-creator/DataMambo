@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Header from '../components/Header';
+import { Theme } from '../types';
 
-const Settings: React.FC = () => {
-    // Initialize state based on the presence of 'dark' class on <html>
-    const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
+interface SettingsProps {
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
+}
 
-    // Effect to toggle the class on the html element when state changes
-    useEffect(() => {
-        const htmlElement = document.documentElement;
-        if (isDarkMode) {
-            htmlElement.classList.add('dark');
-        } else {
-            htmlElement.classList.remove('dark');
-        }
-    }, [isDarkMode]);
-
-    const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-    };
+const Settings: React.FC<SettingsProps> = ({ theme, setTheme }) => {
+    const themeOptions: { name: Theme, label: string }[] = [
+        { name: 'light', label: 'Light' },
+        { name: 'dark', label: 'Dark' },
+        { name: 'bw', label: 'B & W' }
+    ];
 
     return (
         <div className="p-6">
@@ -49,18 +44,23 @@ const Settings: React.FC = () => {
                      <div className="flex items-center justify-between">
                         <div className="text-on-surface">
                             <p className="font-medium">Interface Theme</p>
-                            <p className="text-sm text-on-surface-secondary">Select your preferred light or dark mode.</p>
+                            <p className="text-sm text-on-surface-secondary">Select your preferred interface style.</p>
                         </div>
-                        <div className="flex items-center space-x-4">
-                            <span className={`text-sm font-medium ${!isDarkMode ? 'text-primary' : 'text-on-surface-secondary'}`}>Light</span>
-                            <button 
-                                onClick={toggleTheme} 
-                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-primary ${isDarkMode ? 'bg-primary' : 'bg-gray-600'}`}
-                                aria-pressed={isDarkMode}
-                            >
-                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? 'translate-x-6' : 'translate-x-1'}`} />
-                            </button>
-                            <span className={`text-sm font-medium ${isDarkMode ? 'text-primary' : 'text-on-surface-secondary'}`}>Dark</span>
+                        <div className="flex items-center space-x-2 bg-background p-1 rounded-full">
+                            {themeOptions.map((option) => (
+                                <button
+                                    key={option.name}
+                                    onClick={() => setTheme(option.name)}
+                                    className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
+                                        theme === option.name
+                                            ? 'bg-primary text-white shadow-md'
+                                            : 'text-on-surface-secondary hover:text-on-surface'
+                                    }`}
+                                    aria-pressed={theme === option.name}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>

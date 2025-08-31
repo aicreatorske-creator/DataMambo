@@ -1,5 +1,8 @@
+
+
 import React from 'react';
-import { Platform, PlatformData, Metric } from '../types';
+// FIX: Import the 'Metric' type to resolve the 'Cannot find name' error.
+import { Platform, PlatformData, Theme, Metric } from '../types';
 import { Page } from '../App';
 import Header from '../components/Header';
 import MetricCard from '../components/MetricCard';
@@ -8,6 +11,8 @@ import { platformIcons } from '../constants';
 interface OverviewProps {
     allPlatformData: Record<Platform, PlatformData>;
     onNavigate: (page: Page) => void;
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
 }
 
 const ShortcutCard: React.FC<{ icon: JSX.Element, title: string, description: string, onClick: () => void }> = ({ icon, title, description, onClick }) => (
@@ -17,6 +22,47 @@ const ShortcutCard: React.FC<{ icon: JSX.Element, title: string, description: st
         <p className="text-on-surface-secondary">{description}</p>
     </button>
 );
+
+const SunIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
+
+const ThemeToggleCard: React.FC<{ theme: Theme, setTheme: (theme: Theme) => void }> = ({ theme, setTheme }) => {
+    const isDark = theme !== 'light';
+
+    const toggleTheme = () => {
+        setTheme(isDark ? 'light' : 'dark');
+    };
+
+    return (
+        <div className="bg-surface p-6 rounded-xl shadow-lg h-full flex flex-col">
+            <div className="text-primary mb-3"><SunIcon /></div>
+            <h3 className="text-xl font-bold text-on-surface mb-2">Display Mode</h3>
+            <p className="text-on-surface-secondary flex-grow">Switch between light and dark themes.</p>
+            <div className="flex items-center justify-between mt-4">
+                <label htmlFor="theme-toggle-light" className="text-sm font-medium text-on-surface-secondary cursor-pointer">Light</label>
+                <button
+                    id="theme-toggle"
+                    onClick={toggleTheme}
+                    type="button"
+                    role="switch"
+                    aria-checked={isDark}
+                    className={`${
+                        isDark ? 'bg-primary' : 'bg-gray-600'
+                    } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface`}
+                >
+                    <span className="sr-only">Toggle Dark Mode</span>
+                    <span
+                        aria-hidden="true"
+                        className={`${
+                            isDark ? 'translate-x-5' : 'translate-x-0'
+                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                    />
+                </button>
+                <label htmlFor="theme-toggle-dark" className="text-sm font-medium text-on-surface-secondary cursor-pointer">Dark</label>
+            </div>
+        </div>
+    );
+};
+
 
 const PlatformMetricCard: React.FC<{metric: Metric}> = ({ metric }) => {
     const isIncrease = metric.changeType === 'increase';
@@ -37,7 +83,7 @@ const PlatformMetricCard: React.FC<{metric: Metric}> = ({ metric }) => {
     )
 }
 
-const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate }) => {
+const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate, theme, setTheme }) => {
     return (
         <div className="p-6 space-y-8">
             <Header title="Overview" description="A global snapshot of all your social media accounts." showPlatformSelector={false} />
@@ -45,25 +91,28 @@ const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate }) => {
             <div>
                  <h2 className="text-2xl font-bold text-on-surface mb-4">Platform Metrics</h2>
                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {Object.entries(allPlatformData).map(([platform, data]) => (
-                        <div key={platform} className="bg-surface p-6 rounded-xl shadow-lg flex flex-col gap-y-4">
-                            <div className="flex items-center space-x-3">
-                                <img src={platformIcons[platform as Platform]} alt={`${platform} icon`} className="w-8 h-8"/>
-                                <h3 className="text-xl font-bold text-on-surface">{platform}</h3>
+                    {Object.entries(allPlatformData).map(([platform, data]) => {
+                        const PlatformIcon = platformIcons[platform as Platform];
+                        return (
+                            <div key={platform} className="bg-surface p-6 rounded-xl shadow-lg flex flex-col gap-y-4">
+                                <div className="flex items-center space-x-3">
+                                    {PlatformIcon && <PlatformIcon className="w-8 h-8 text-on-surface"/>}
+                                    <h3 className="text-xl font-bold text-on-surface">{platform}</h3>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {data.metrics.map(metric => (
+                                        <PlatformMetricCard key={metric.title} metric={metric} />
+                                    ))}
+                                </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {data.metrics.map(metric => (
-                                    <PlatformMetricCard key={metric.title} metric={metric} />
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
 
             <div>
                 <h2 className="text-2xl font-bold text-on-surface mb-4">Quick Access</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <ShortcutCard 
                         icon={<ChartBarIcon />} 
                         title="Analytics" 
@@ -82,6 +131,7 @@ const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate }) => {
                         description="Understand who your followers are and where they come from."
                         onClick={() => onNavigate('Audience')}
                     />
+                    <ThemeToggleCard theme={theme} setTheme={setTheme} />
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
 // FIX: Correctly import `useState` from 'react' to resolve multiple 'Cannot find name' errors.
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import LoginPage from './components/LoginPage';
-import { Platform } from './types';
+import { Platform, Theme } from './types';
 import { MOCK_DATA } from './constants';
 
 import Overview from './pages/Overview';
@@ -17,6 +17,12 @@ const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [activePage, setActivePage] = useState<Page>('Overview');
     const [selectedPlatform, setSelectedPlatform] = useState<Platform>(Platform.Instagram);
+    const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'bw');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
     
     const data = MOCK_DATA[selectedPlatform];
 
@@ -31,7 +37,7 @@ const App: React.FC = () => {
     const renderPage = () => {
         switch (activePage) {
             case 'Overview':
-                return <Overview allPlatformData={MOCK_DATA} onNavigate={setActivePage} />;
+                return <Overview allPlatformData={MOCK_DATA} onNavigate={setActivePage} theme={theme} setTheme={setTheme} />;
             case 'Analytics':
                 return <Analytics platformData={data} selectedPlatform={selectedPlatform} onPlatformChange={setSelectedPlatform} />;
             case 'Content':
@@ -39,9 +45,9 @@ const App: React.FC = () => {
             case 'Audience':
                  return <Audience platformData={data} selectedPlatform={selectedPlatform} onPlatformChange={setSelectedPlatform} />;
             case 'Settings':
-                return <Settings />;
+                return <Settings theme={theme} setTheme={setTheme} />;
             default:
-                return <Overview allPlatformData={MOCK_DATA} onNavigate={setActivePage} />;
+                return <Overview allPlatformData={MOCK_DATA} onNavigate={setActivePage} theme={theme} setTheme={setTheme} />;
         }
     };
 
