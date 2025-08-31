@@ -5,8 +5,8 @@ import React from 'react';
 import { Platform, PlatformData, Theme, Metric } from '../types';
 import { Page } from '../App';
 import Header from '../components/Header';
+import MetricCard from '../components/MetricCard';
 import { platformIcons } from '../constants';
-import ThemeSwitcher from '../components/ThemeSwitcher';
 
 interface OverviewProps {
     allPlatformData: Record<Platform, PlatformData>;
@@ -25,14 +25,39 @@ const ShortcutCard: React.FC<{ icon: JSX.Element, title: string, description: st
 
 const SunIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
 
-const ThemeCard: React.FC<{ theme: Theme, setTheme: (theme: Theme) => void }> = ({ theme, setTheme }) => {
+const ThemeToggleCard: React.FC<{ theme: Theme, setTheme: (theme: Theme) => void }> = ({ theme, setTheme }) => {
+    const isDark = theme !== 'light';
+
+    const toggleTheme = () => {
+        setTheme(isDark ? 'light' : 'dark');
+    };
+
     return (
         <div className="bg-surface p-6 rounded-xl shadow-lg h-full flex flex-col">
             <div className="text-primary mb-3"><SunIcon /></div>
             <h3 className="text-xl font-bold text-on-surface mb-2">Display Mode</h3>
-            <p className="text-on-surface-secondary flex-grow">Select your preferred interface style.</p>
-            <div className="flex items-center justify-center mt-4">
-                <ThemeSwitcher theme={theme} setTheme={setTheme} />
+            <p className="text-on-surface-secondary flex-grow">Switch between light and dark themes.</p>
+            <div className="flex items-center justify-between mt-4">
+                <label htmlFor="theme-toggle-light" className="text-sm font-medium text-on-surface-secondary cursor-pointer">Light</label>
+                <button
+                    id="theme-toggle"
+                    onClick={toggleTheme}
+                    type="button"
+                    role="switch"
+                    aria-checked={isDark}
+                    className={`${
+                        isDark ? 'bg-primary' : 'bg-gray-600'
+                    } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface`}
+                >
+                    <span className="sr-only">Toggle Dark Mode</span>
+                    <span
+                        aria-hidden="true"
+                        className={`${
+                            isDark ? 'translate-x-5' : 'translate-x-0'
+                        } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+                    />
+                </button>
+                <label htmlFor="theme-toggle-dark" className="text-sm font-medium text-on-surface-secondary cursor-pointer">Dark</label>
             </div>
         </div>
     );
@@ -106,7 +131,7 @@ const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate, theme,
                         description="Understand who your followers are and where they come from."
                         onClick={() => onNavigate('Audience')}
                     />
-                    <ThemeCard theme={theme} setTheme={setTheme} />
+                    <ThemeToggleCard theme={theme} setTheme={setTheme} />
                 </div>
             </div>
         </div>

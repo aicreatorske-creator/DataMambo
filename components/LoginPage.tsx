@@ -1,19 +1,7 @@
 
+
 import React from 'react';
-
-const LogoIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="8" fill="url(#paint0_linear_47_103)"/>
-        <path d="M9 22V10L16 16L23 10V22L16 16L9 22Z" fill="white"/>
-        <defs>
-            <linearGradient id="paint0_linear_47_103" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#6366F1"/>
-                <stop offset="1" stopColor="#8B5CF6"/>
-            </linearGradient>
-        </defs>
-    </svg>
-);
-
+import { LogoIcon } from './PlatformIcons';
 
 interface LoginPageProps {
     onLogin: () => void;
@@ -31,7 +19,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="flex items-center justify-center min-h-screen bg-background">
             <div className="w-full max-w-md p-8 space-y-8 bg-surface rounded-2xl shadow-lg">
                 <div className="flex flex-col items-center">
-                    <LogoIcon />
+                    <LogoIcon className="w-16 h-16 text-primary"/>
                     <h1 className="mt-4 text-4xl font-bold text-on-surface">DataMambo</h1>
                     <p className="mt-2 text-on-surface-secondary">Sign in to your analytics dashboard</p>
                 </div>

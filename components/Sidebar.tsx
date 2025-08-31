@@ -2,19 +2,7 @@
 
 import React from 'react';
 import { Page } from '../App';
-
-const LogoIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="8" fill="url(#paint0_linear_47_103)"/>
-        <path d="M9 22V10L16 16L23 10V22L16 16L9 22Z" fill="white"/>
-        <defs>
-            <linearGradient id="paint0_linear_47_103" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#6366F1"/>
-                <stop offset="1" stopColor="#8B5CF6"/>
-            </linearGradient>
-        </defs>
-    </svg>
-);
+import { LogoIcon } from './PlatformIcons';
 
 const NavLink: React.FC<{ icon: JSX.Element; label: string; active?: boolean; onClick: () => void; }> = ({ icon, label, active, onClick }) => (
     <button onClick={onClick} className={`flex w-full items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${active ? 'bg-primary text-white' : 'hover:bg-surface text-on-surface-secondary hover:text-on-surface'}`}>
@@ -41,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }
     return (
         <aside className="w-64 bg-surface flex-shrink-0 p-6 flex-col hidden md:flex">
             <div className="flex items-center space-x-3 mb-10">
-                <LogoIcon />
+                <LogoIcon className="w-8 h-8 text-primary"/>
                 <span className="text-2xl font-bold text-on-surface">DataMambo</span>
             </div>
             <nav className="flex-1 space-y-2">
@@ -55,15 +43,21 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }
                 ))}
             </nav>
             <div className="mt-auto">
-                 <div className="flex items-center space-x-3 border-t border-gray-700 pt-6">
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-on-surface">
-                        <UserCircleIcon className="w-7 h-7" />
+                 <button 
+                    onClick={() => setActivePage('Profile')}
+                    className={`w-full text-left p-2 rounded-lg transition-colors duration-200 border-t border-gray-700 mt-4 pt-6 ${activePage === 'Profile' ? 'bg-primary/10' : 'hover:bg-primary/10'}`}
+                    aria-label="View Profile"
+                 >
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-on-surface">
+                            <UserCircleIcon className="w-7 h-7" />
+                        </div>
+                        <div>
+                            <p className="font-semibold text-on-surface">Jane Doe</p>
+                            <p className="text-sm text-on-surface-secondary">Agency Owner</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="font-semibold text-on-surface">Jane Doe</p>
-                        <p className="text-sm text-on-surface-secondary">Agency Owner</p>
-                    </div>
-                 </div>
+                 </button>
                  <button 
                     onClick={onLogout} 
                     className="w-full flex items-center space-x-3 px-4 py-3 mt-4 rounded-lg transition-colors duration-200 hover:bg-danger/20 text-danger"

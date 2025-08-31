@@ -42,3 +42,17 @@ export interface PlatformData {
     topPosts: Post[];
     audienceDemographics: DemographicsData[];
 }
+
+export interface UserActivity {
+    id: number;
+    action: string;
+    timestamp: string;
+    ipAddress: string;
+}
+
+export interface UserProfile {
+    name: string;
+    role: string;
+    email: string;
+    recentActivity: UserActivity[];
+}

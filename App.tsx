@@ -10,8 +10,9 @@ import Analytics from './pages/Analytics';
 import Content from './pages/Content';
 import Audience from './pages/Audience';
 import Settings from './pages/Settings';
+import Profile from './pages/Profile';
 
-export type Page = 'Overview' | 'Analytics' | 'Content' | 'Audience' | 'Reports' | 'Settings';
+export type Page = 'Overview' | 'Analytics' | 'Content' | 'Audience' | 'Reports' | 'Settings' | 'Profile';
 
 const App: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,8 @@ const App: React.FC = () => {
                  return <Audience platformData={data} selectedPlatform={selectedPlatform} onPlatformChange={setSelectedPlatform} />;
             case 'Settings':
                 return <Settings theme={theme} setTheme={setTheme} />;
+            case 'Profile':
+                return <Profile />;
             default:
                 return <Overview allPlatformData={MOCK_DATA} onNavigate={setActivePage} theme={theme} setTheme={setTheme} />;
         }

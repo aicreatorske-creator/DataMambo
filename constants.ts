@@ -1,5 +1,5 @@
 
-import { Platform, PlatformData } from './types';
+import { Platform, PlatformData, UserProfile } from './types';
 import { FacebookIcon, InstagramIcon, LinkedInIcon, TikTokIcon, TwitterIcon, YouTubeIcon } from './components/PlatformIcons';
 import React from 'react';
 
@@ -216,4 +216,16 @@ export const MOCK_DATA: Record<Platform, PlatformData> = {
             { name: '45+', value: 10 },
         ],
     },
+};
+
+export const USER_PROFILE: UserProfile = {
+    name: 'Jane Doe',
+    role: 'Agency Owner',
+    email: 'jane.doe@datamambo.com',
+    recentActivity: [
+        { id: 1, action: 'Logged in', timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), ipAddress: '192.168.1.1' },
+        { id: 2, action: 'Changed password', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), ipAddress: '192.168.1.1' },
+        { id: 3, action: 'Logged in', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), ipAddress: '8.8.8.8' },
+        { id: 4, action: 'Logged in', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(), ipAddress: '8.8.8.8' },
+    ]
 };
