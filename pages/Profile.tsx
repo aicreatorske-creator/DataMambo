@@ -1,8 +1,45 @@
-import React from 'react';
+
+
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import { USER_PROFILE } from '../constants';
+import { FirebaseUser } from '../types';
+import { auth } from '../services/firebase';
 
-const Profile: React.FC = () => {
+interface ProfileProps {
+    user: FirebaseUser | null;
+}
+
+const Profile: React.FC<ProfileProps> = ({ user }) => {
+    const [displayName, setDisplayName] = useState(user?.displayName || '');
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const isGuest = user?.isGuest;
+
+    const handleProfileUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user || !displayName.trim() || isGuest) return;
+
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+
+        try {
+            await auth.currentUser?.updateProfile({ displayName: displayName.trim() });
+            // Note: This requires re-authentication for the change to be reflected immediately in the auth object.
+            // A simple page refresh or re-login will show the change. For a smoother UX, you might manage state globally.
+            setSuccess("Profile updated successfully! Refresh to see changes.");
+            setIsEditing(false);
+        } catch (err: any) {
+            setError(err.message || "Failed to update profile.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     return (
         <div className="p-6 space-y-8">
             <Header title="My Profile" description="View and manage your personal information and activity." showPlatformSelector={false} />
@@ -14,31 +51,52 @@ const Profile: React.FC = () => {
                         <div className="w-32 h-32 rounded-full bg-secondary mx-auto flex items-center justify-center text-on-surface mb-4 ring-4 ring-surface ring-offset-4 ring-offset-background">
                             <UserCircleIcon className="w-24 h-24" />
                         </div>
-                        <h2 className="text-2xl font-bold text-on-surface">{USER_PROFILE.name}</h2>
-                        <p className="text-on-surface-secondary">{USER_PROFILE.role}</p>
-                        <p className="text-sm text-on-surface-secondary mt-2">{USER_PROFILE.email}</p>
-                        <button className="mt-6 w-full bg-primary text-white font-semibold py-2 px-4 rounded-lg hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface">
-                            Edit Profile
-                        </button>
-                    </div>
-
-                     <div className="bg-surface p-8 rounded-xl shadow-lg">
-                        <h3 className="text-xl font-bold text-on-surface mb-6">Account Security</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label htmlFor="current-password" className="block text-sm font-medium text-on-surface-secondary mb-1">Current Password</label>
-                                <input type="password" name="current-password" id="current-password" defaultValue="••••••••" className="w-full bg-background border border-gray-600 rounded-lg p-3 text-on-surface focus:ring-primary focus:border-primary" />
-                            </div>
-                            <button className="w-full border border-primary text-primary font-semibold py-2 px-4 rounded-lg hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface">
-                                Change Password
+                        <h2 className="text-2xl font-bold text-on-surface">{user?.displayName || 'No Name'}</h2>
+                        <p className="text-sm text-on-surface-secondary mt-2">{user?.email}</p>
+                        {isGuest && <p className="text-xs text-secondary mt-2 font-semibold">(Guest Mode)</p>}
+                        
+                        {!isEditing ? (
+                            <button 
+                                onClick={() => setIsEditing(true)}
+                                disabled={isGuest}
+                                className="mt-6 w-full bg-primary text-white font-semibold py-2 px-4 rounded-lg hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface disabled:bg-gray-500 disabled:cursor-not-allowed">
+                                {isGuest ? 'Sign up to edit profile' : 'Edit Profile'}
                             </button>
-                        </div>
+                        ) : (
+                            <form onSubmit={handleProfileUpdate} className="mt-6 space-y-4">
+                                <input
+                                    type="text"
+                                    value={displayName}
+                                    onChange={(e) => setDisplayName(e.target.value)}
+                                    className="w-full bg-background border border-gray-600 rounded-lg p-3 text-on-surface focus:ring-primary focus:border-primary"
+                                    placeholder="Enter new display name"
+                                />
+                                {error && <p className="text-sm text-danger">{error}</p>}
+                                {success && <p className="text-sm text-success">{success}</p>}
+                                <div className="flex gap-x-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditing(false)}
+                                        className="w-full border border-gray-600 text-on-surface font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full bg-primary text-white font-semibold py-2 px-4 rounded-lg hover:bg-secondary transition-colors disabled:bg-gray-500"
+                                    >
+                                        {loading ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
 
                 {/* Right column: Activity Log */}
                 <div className="lg:col-span-2 bg-surface p-8 rounded-xl shadow-lg">
-                    <h3 className="text-xl font-bold text-on-surface mb-6">Recent Activity</h3>
+                    <h3 className="text-xl font-bold text-on-surface mb-6">Recent Activity (Demo)</h3>
                     <div className="flow-root">
                         <ul role="list" className="-mb-8">
                             {USER_PROFILE.recentActivity.map((activity, activityIdx) => (

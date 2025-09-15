@@ -1,3 +1,4 @@
+
 export enum Platform {
     Instagram = 'Instagram',
     Twitter = 'Twitter',
@@ -55,4 +56,12 @@ export interface UserProfile {
     role: string;
     email: string;
     recentActivity: UserActivity[];
+}
+
+// A simplified placeholder for Firebase's User object
+export interface FirebaseUser {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    isGuest?: boolean;
 }

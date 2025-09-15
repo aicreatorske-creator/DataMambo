@@ -3,6 +3,8 @@
 import React from 'react';
 import { Page } from '../App';
 import { LogoIcon } from './PlatformIcons';
+import { FirebaseUser } from '../types';
+import { auth } from '../services/firebase';
 
 const NavLink: React.FC<{ icon: JSX.Element; label: string; active?: boolean; onClick: () => void; }> = ({ icon, label, active, onClick }) => (
     <button onClick={onClick} className={`flex w-full items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${active ? 'bg-primary text-white' : 'hover:bg-surface text-on-surface-secondary hover:text-on-surface'}`}>
@@ -12,12 +14,12 @@ const NavLink: React.FC<{ icon: JSX.Element; label: string; active?: boolean; on
 );
 
 interface SidebarProps {
-    onLogout: () => void;
     activePage: Page;
     setActivePage: (page: Page) => void;
+    user: FirebaseUser | null;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, user }) => {
     const navItems = [
         { icon: <HomeIcon />, label: 'Overview', page: 'Overview' as Page },
         { icon: <ChartBarIcon />, label: 'Analytics', page: 'Analytics' as Page },
@@ -25,6 +27,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }
         { icon: <UsersIcon />, label: 'Audience', page: 'Audience' as Page },
         { icon: <CogIcon />, label: 'Settings', page: 'Settings' as Page },
     ];
+    
+    const handleLogout = () => {
+        auth.signOut();
+    };
 
     return (
         <aside className="w-64 bg-surface flex-shrink-0 p-6 flex-col hidden md:flex">
@@ -53,13 +59,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activePage, setActivePage }
                             <UserCircleIcon className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="font-semibold text-on-surface">Jane Doe</p>
-                            <p className="text-sm text-on-surface-secondary">Agency Owner</p>
+                            <p className="font-semibold text-on-surface">{user?.displayName || 'Guest User'}</p>
+                            <p className="text-sm text-on-surface-secondary">{user?.email || 'No email'}</p>
                         </div>
                     </div>
                  </button>
                  <button 
-                    onClick={onLogout} 
+                    onClick={handleLogout} 
                     className="w-full flex items-center space-x-3 px-4 py-3 mt-4 rounded-lg transition-colors duration-200 hover:bg-danger/20 text-danger"
                  >
                     <LogoutIcon />
