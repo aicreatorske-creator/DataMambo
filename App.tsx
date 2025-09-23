@@ -9,6 +9,7 @@ import Overview from './pages/Overview';
 import Analytics from './pages/Analytics';
 import Content from './pages/Content';
 import Audience from './pages/Audience';
+import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import { useAuth } from './hooks/useAuth';
@@ -39,6 +40,8 @@ const App: React.FC = () => {
                  return <Content platformData={data} selectedPlatform={selectedPlatform} onPlatformChange={setSelectedPlatform} />;
             case 'Audience':
                  return <Audience platformData={data} selectedPlatform={selectedPlatform} onPlatformChange={setSelectedPlatform} />;
+            case 'Reports':
+                return <Reports />;
             case 'Settings':
                 return <Settings theme={theme} setTheme={setTheme} />;
             case 'Profile':

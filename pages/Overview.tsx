@@ -15,7 +15,8 @@ interface OverviewProps {
     setTheme: (theme: Theme) => void;
 }
 
-const ShortcutCard: React.FC<{ icon: JSX.Element, title: string, description: string, onClick: () => void }> = ({ icon, title, description, onClick }) => (
+// FIX: Replace JSX.Element with React.ReactNode to resolve "Cannot find namespace 'JSX'" error.
+const ShortcutCard: React.FC<{ icon: React.ReactNode, title: string, description: string, onClick: () => void }> = ({ icon, title, description, onClick }) => (
     <button onClick={onClick} className="bg-surface p-6 rounded-xl shadow-lg h-full text-left transition-all duration-300 hover:scale-105 hover:bg-primary/20 border border-transparent hover:border-primary">
         <div className="text-primary mb-3">{icon}</div>
         <h3 className="text-xl font-bold text-on-surface mb-2">{title}</h3>
@@ -91,7 +92,9 @@ const Overview: React.FC<OverviewProps> = ({ allPlatformData, onNavigate, theme,
             <div>
                  <h2 className="text-2xl font-bold text-on-surface mb-4">Platform Metrics</h2>
                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {Object.entries(allPlatformData).map(([platform, data]) => {
+                    {/* FIX: Use Object.keys to avoid type inference issues with Object.entries */}
+                    {Object.keys(allPlatformData).map((platform) => {
+                        const data = allPlatformData[platform as Platform];
                         const PlatformIcon = platformIcons[platform as Platform];
                         return (
                             <div key={platform} className="bg-surface p-6 rounded-xl shadow-lg flex flex-col gap-y-4">
