@@ -1,4 +1,3 @@
-
 export enum Platform {
     Instagram = 'Instagram',
     Twitter = 'Twitter',
@@ -64,4 +63,10 @@ export interface FirebaseUser {
     email: string | null;
     displayName: string | null;
     isGuest?: boolean;
+}
+
+export interface AISuggestion {
+    ideaTitle: string;
+    caption: string;
+    contentType: string;
 }
