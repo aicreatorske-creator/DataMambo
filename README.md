@@ -57,12 +57,12 @@ This project is designed to run in an environment that supports modern JavaScrip
 
 1.  **Set up Environment Variables**
 
-    To use the AI-powered features, you need a Google Gemini API key. The application is configured to load this variable from `process.env.API_KEY`. You must ensure this variable is available in the execution environment.
+    To use the AI-powered features, you need a Google Gemini API key. The application is configured to load this key from the `API_KEY` environment variable.
 
     1.  Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-    2.  Make the API key available as an environment variable named `API_KEY`.
+    2.  Ensure that the `API_KEY` environment variable is set in the execution environment where the application is run. The application will access it via `process.env.API_KEY`.
 
-    _Note: The method for setting environment variables depends on your deployment or development platform._
+    _Note: The key's availability is handled externally and is a hard requirement. The application will not function correctly without it._
 
 2.  **Run the application**
     
@@ -72,7 +72,7 @@ This project is designed to run in an environment that supports modern JavaScrip
 
 Security is a top priority for DataMambo.
 
-*   **API Key Management**: The Google Gemini API key is intended to be used via a serverless backend or a build-time environment variable substitution. **Do not expose your API key directly in client-side code in a production environment.** The current setup uses `process.env.API_KEY` to abstract away the key's origin, assuming it is provided by a secure environment.
+*   **API Key Management**: The Google Gemini API key is loaded from the `API_KEY` environment variable via `process.env.API_KEY`. **Do not expose your API key directly in client-side code or commit it to version control.** The application is designed to run in an environment where the `API_KEY` is securely provided.
 *   **Authentication**: The app includes a mock authentication system. In a real-world scenario, this would be replaced with a secure service like Firebase Authentication, including security rules for data access.
 *   **Cross-Site Scripting (XSS)**: We leverage React's automatic escaping of JSX content to prevent XSS attacks from user-generated data. All data should be properly sanitized on the backend before being sent to the client.
 
