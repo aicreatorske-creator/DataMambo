@@ -1,66 +1,28 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
 import { Post, AISuggestion } from '../types';
 
-// FIX: Per coding guidelines, initialize GoogleGenAI directly with process.env.API_KEY.
-// The key is assumed to be available in the execution environment.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-
-const model = "gemini-2.5-flash";
-
-const responseSchema = {
-    type: Type.ARRAY,
-    items: {
-      type: Type.OBJECT,
-      properties: {
-        ideaTitle: {
-          type: Type.STRING,
-          description: "A short, catchy title for the content idea.",
-        },
-        caption: {
-          type: Type.STRING,
-          description: "A compelling caption for the social media post.",
-        },
-        contentType: {
-            type: Type.STRING,
-            description: "The suggested format for the content (e.g., 'Image Post', 'Short Video', 'Carousel', 'Thread').",
-        }
-      },
-      required: ["ideaTitle", "caption", "contentType"],
-    },
-};
-
 export const generateContentSuggestions = async (posts: Post[], platform: string): Promise<AISuggestion[]> => {
-    const postSummaries = posts.map(p => `Caption: "${p.caption}", Likes: ${p.likes}, Comments: ${p.comments}`).join('\n');
-
-    const prompt = `
-        As a social media expert for ${platform}, analyze the following top-performing posts to identify trends and patterns in content that resonates with the audience.
-        
-        Top Posts Data:
-        ${postSummaries}
-
-        Based on this analysis, generate 3 creative and distinct new content suggestions. 
-        Each suggestion should be tailored for the ${platform} platform.
-        Return the response as a JSON array of objects.
-    `;
-
     try {
-        const response = await ai.models.generateContent({
-            model: model,
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
-                temperature: 0.8,
-            }
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ posts, platform }),
         });
-        
-        const jsonText = response.text.trim();
-        const suggestions: AISuggestion[] = JSON.parse(jsonText);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Request failed with status ${response.status}`);
+        }
+
+        const suggestions: AISuggestion[] = await response.json();
         return suggestions;
 
     } catch (error) {
         console.error("Error generating content suggestions:", error);
-        throw new Error("Failed to get suggestions from AI. Please try again.");
+        if (error instanceof Error) {
+             throw new Error(error.message || "Failed to get suggestions from AI. Please try again.");
+        }
+        throw new Error("An unknown error occurred while fetching suggestions.");
     }
 };

@@ -9,9 +9,9 @@ This project also features AI-powered content suggestions using the **Google Gem
 - [About The Project](#about-the-project)
   - [Built With](#built-with)
 - [Features](#features)
-- [Getting Started](#getting-started)
+- [Getting Started & Deployment](#getting-started--deployment)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+  - [Deployment Steps](#deployment-steps)
 - [Security](#security)
 - [License](#license)
 
@@ -33,6 +33,7 @@ This project is built with a modern, robust, and performant tech stack:
 *   [Tailwind CSS](https://tailwindcss.com/)
 *   [Recharts](https://recharts.org/) for data visualization
 *   [Google Gemini API](https://ai.google.dev/) for AI features
+*   [Vercel](https://vercel.com/) for hosting and serverless functions
 
 ## Features
 
@@ -45,36 +46,53 @@ This project is built with a modern, robust, and performant tech stack:
 *   **Customizable Theming**: Switch between Light, Dark, and Black & White themes to suit your preference.
 *   **Authentication**: A mock authentication flow for user sign-up, sign-in, and guest access.
 
-## Getting Started
+## Getting Started & Deployment
 
-To get a local copy up and running, follow these simple steps.
+This project is optimized for deployment on [Vercel](https://vercel.com/).
 
 ### Prerequisites
 
-This project is designed to run in an environment that supports modern JavaScript and has a module system for imports.
+*   A Vercel account.
+*   [Vercel CLI](https://vercel.com/cli) installed on your local machine.
+*   A Google Gemini API Key.
 
-### Installation
+### Deployment Steps
 
-1.  **Set up Environment Variables**
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd <repository-name>
+    ```
 
-    To use the AI-powered features, you need a Google Gemini API key. The application is configured to load this key from the `API_KEY` environment variable.
+2.  **Set up Environment Variables on Vercel**
+
+    The application requires a Google Gemini API key. This key is stored securely as an environment variable on Vercel.
 
     1.  Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-    2.  Ensure that the `API_KEY` environment variable is set in the execution environment where the application is run. The application will access it via `process.env.API_KEY`.
+    2.  Link your local project to Vercel:
+        ```bash
+        vercel link
+        ```
+    3.  Add the API key as a secret environment variable:
+        ```bash
+        vercel env add API_KEY
+        ```
+        When prompted, paste your API key. Vercel will encrypt this value and make it available to the serverless function during runtime.
 
-    _Note: The key's availability is handled externally and is a hard requirement. The application will not function correctly without it._
+3.  **Deploy the application:**
+    ```bash
+    vercel --prod
+    ```
 
-2.  **Run the application**
-    
-    Open the `index.html` file in your web browser. The application will start automatically.
+Vercel will automatically install dependencies, build the project, deploy the static files, and set up the serverless function. Your analytics dashboard will be live!
 
 ## Security
 
 Security is a top priority for DataMambo.
 
-*   **API Key Management**: The Google Gemini API key is loaded from the `API_KEY` environment variable via `process.env.API_KEY`. **Do not expose your API key directly in client-side code or commit it to version control.** The application is designed to run in an environment where the `API_KEY` is securely provided.
+*   **API Key Management**: The Google Gemini API key is securely managed as an environment variable on Vercel. It is only accessible by the backend serverless function (`/api/generate`) and is **never exposed to the client-side browser**. This prevents unauthorized use of the API key.
 *   **Authentication**: The app includes a mock authentication system. In a real-world scenario, this would be replaced with a secure service like Firebase Authentication, including security rules for data access.
-*   **Cross-Site Scripting (XSS)**: We leverage React's automatic escaping of JSX content to prevent XSS attacks from user-generated data. All data should be properly sanitized on the backend before being sent to the client.
+*   **Cross-Site Scripting (XSS)**: We leverage React's automatic escaping of JSX content to prevent XSS attacks from user-generated data.
 
 ## License
 
