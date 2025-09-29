@@ -1,12 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Post, AISuggestion } from '../types';
 
-// The instructions specify to use process.env.API_KEY. In a real-world scenario,
-// this client-side call should be moved to a secure serverless backend to protect the API key.
-const API_KEY = process.env.API_KEY;
+// In a Vite-based project, environment variables must be prefixed with VITE_
+// and accessed via import.meta.env. This is a security measure to prevent
+// accidental exposure of server-side keys on the client.
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 if (!API_KEY) {
-    console.warn("API_KEY environment variable is not set. AI features will not be available.");
+    console.warn("VITE_API_KEY environment variable is not set. AI features will not be available.");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
